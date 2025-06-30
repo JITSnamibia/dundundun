@@ -10,6 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingIndicator: document.getElementById('loadingIndicator'),
             errorState: document.getElementById('errorState'),
             refreshBtn: document.getElementById('refreshBtn'),
+            hostStatusPanel: document.getElementById('hostStatusPanel'),
+            hostCpuFill: document.getElementById('hostCpuFill'),
+            hostCpuValue: document.getElementById('hostCpuValue'),
+            hostMemFill: document.getElementById('hostMemFill'),
+            hostMemValue: document.getElementById('hostMemValue'),
+            hostStorageFill: document.getElementById('hostStorageFill'),
+            hostStorageValue: document.getElementById('hostStorageValue'),
         },
 
         charts: new Map(),
@@ -21,12 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         
         async loadData() {
-            const isFirstLoad = this.charts.size === 0;
+            const isFirstLoad = !this.charts.size;
             if (isFirstLoad) this.setLoading(true);
 
             try {
-                const servers = await fetchServerData();
-                this.render(servers, isFirstLoad);
+                const { servers, host } = await fetchServerData();
+                this.renderHostStatus(host);
+                this.render(servers);
                 this.setError(false);
             } catch (error) {
                 console.error("Error fetching server data:", error);
@@ -39,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setLoading(isLoading) {
             this.elements.loadingIndicator.style.display = isLoading ? 'block' : 'none';
             this.elements.serverGrid.style.display = isLoading ? 'none' : 'grid';
+            this.elements.hostStatusPanel.style.display = isLoading ? 'none' : 'grid';
             if (isLoading) this.elements.errorState.style.display = 'none';
         },
 
@@ -46,7 +55,21 @@ document.addEventListener('DOMContentLoaded', () => {
             this.elements.errorState.style.display = hasError ? 'block' : 'none';
         },
 
-        render(servers, isFirstLoad) {
+        renderHostStatus(host) {
+            const memUsage = host.memory.used / host.memory.total;
+            const storageUsage = host.storage.used / host.storage.total;
+
+            this.elements.hostCpuFill.style.width = `${host.cpu * 100}%`;
+            this.elements.hostCpuValue.textContent = `${(host.cpu * 100).toFixed(1)}%`;
+
+            this.elements.hostMemFill.style.width = `${memUsage * 100}%`;
+            this.elements.hostMemValue.textContent = `${(host.memory.used / 1024**3).toFixed(1)} / ${(host.memory.total / 1024**3).toFixed(1)} GB`;
+            
+            this.elements.hostStorageFill.style.width = `${storageUsage * 100}%`;
+            this.elements.hostStorageValue.textContent = `${(host.storage.used / 1024**3).toFixed(1)} / ${(host.storage.total / 1024**3).toFixed(1)} GB`;
+        },
+
+        render(servers) {
             servers.forEach((server, index) => {
                 if (!this.charts.has(server.vmid)) {
                     this.createServerCard(server, index);
@@ -63,17 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const serverCardEl = cardTemplate.querySelector('.server-card');
             
             cardContainerEl.style.setProperty('--animation-delay', `${index * 100}ms`);
-            
-            serverCardEl.addEventListener('click', (e) => {
-                // Prevent flipping if a button on the back is clicked
-                if (e.target.classList.contains('btn-flip')) {
-                     cardContainerEl.classList.remove('is-flipped');
-                } else if (e.target.closest('.card__front')) {
-                    // Only flip if the front of the card is clicked
-                    cardContainerEl.classList.add('is-flipped');
-                }
-            });
 
+            this.addCardEventListeners(cardContainerEl, serverCardEl);
+            
             this.elements.serverGrid.appendChild(cardTemplate);
             
             const cpuCanvas = serverCardEl.querySelector('.cpu-chart');
@@ -86,6 +101,36 @@ document.addEventListener('DOMContentLoaded', () => {
             this.updateServerCard(server.vmid, server);
         },
 
+        addCardEventListeners(container, card) {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.card__front') && !e.target.closest('.vm-control-btn')) {
+                    container.classList.add('is-flipped');
+                }
+            });
+
+            const flipBackButton = card.querySelector('.btn-flip');
+            flipBackButton.addEventListener('click', () => container.classList.remove('is-flipped'));
+
+            const controlButtons = card.querySelectorAll('.vm-control-btn');
+            controlButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent card from flipping when a button is clicked
+                    this.handleVmControl(card, btn.textContent);
+                });
+            });
+        },
+
+        handleVmControl(card, action) {
+            const statusEl = card.querySelector('.vm-controls-status');
+            statusEl.textContent = `Sending ${action} command...`;
+            
+            // Simulate API call
+            setTimeout(() => {
+                statusEl.textContent = `${action} command sent!`;
+                setTimeout(() => statusEl.textContent = '', 2000); // Clear message
+            }, 1500);
+        },
+
         updateServerCard(vmid, serverData) {
             const { cpuChart, ramChart, serverCardEl } = this.charts.get(vmid);
             
@@ -94,6 +139,11 @@ document.addEventListener('DOMContentLoaded', () => {
             serverCardEl.querySelector('.status-text').textContent = serverData.status;
             serverCardEl.querySelector('.server-card__name').textContent = serverData.name;
             serverCardEl.querySelector('.uptime').textContent = this.formatUptime(serverData.uptime);
+
+            // Enable/disable buttons based on status
+            serverCardEl.querySelector('.btn-start').disabled = serverData.status === 'running';
+            serverCardEl.querySelector('.btn-stop').disabled = serverData.status === 'stopped';
+            serverCardEl.querySelector('.btn-reboot').disabled = serverData.status === 'stopped';
 
             const chartColors = this.getChartColors(serverData.status);
             this.addData(cpuChart, serverData.cpu, chartColors);
@@ -131,16 +181,20 @@ document.addEventListener('DOMContentLoaded', () => {
             chart.data.datasets[0].borderColor = colors.borderColor;
             chart.data.datasets[0].backgroundColor = colors.backgroundColor;
             chart.update('quiet');
-s        },
+        },
 
         getChartColors(status) {
             const rootStyles = getComputedStyle(document.documentElement);
-            const onlineColor = rootStyles.getPropertyValue('--status-online').trim();
-            const offlineColor = rootStyles.getPropertyValue('--status-offline').trim();
             if (status === 'running') {
-                return { borderColor: onlineColor, backgroundColor: 'rgba(0, 255, 157, 0.1)' };
+                return {
+                    borderColor: rootStyles.getPropertyValue('--status-online').trim(),
+                    backgroundColor: 'rgba(0, 255, 157, 0.1)',
+                };
             }
-            return { borderColor: offlineColor, backgroundColor: 'rgba(255, 77, 77, 0.1)' };
+            return {
+                borderColor: rootStyles.getPropertyValue('--status-offline').trim(),
+                backgroundColor: 'rgba(136, 136, 136, 0.1)',
+            };
         },
 
         formatUptime(seconds) {

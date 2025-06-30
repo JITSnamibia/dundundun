@@ -9,9 +9,11 @@
   --color-border: rgba(255, 255, 255, 0.1);
   --color-accent: #00ff9d;
   --color-accent-hover: #00e68e;
+  --color-danger: #ff4d4d;
+  --color-warning: #ffc700;
 
   --status-online: #00ff9d;
-  --status-offline: #ff4d4d;
+  --status-offline: #888888; /* Muted for offline text */
 
   --font-family-heading: 'Orbitron', sans-serif;
   --font-family-body: 'Inter', sans-serif;
@@ -62,58 +64,56 @@ h1,h2,h3,h4,p { margin: 0; }
 /* ==========================================================================
    3. Layout & Header
    ========================================================================== */
-.header {
-  padding: var(--spacing-lg) 0;
-}
-.header__container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.header__logo {
-  font-size: 1.8rem;
-  color: #fff;
-  text-shadow: 0 0 15px var(--color-accent);
-}
-.header__subtitle {
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-}
-.main-content {
-  padding: var(--spacing-lg) 0;
-}
-.footer {
-  padding: var(--spacing-lg) 0;
-  text-align: center;
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-  margin-top: 40px;
-}
+.header { padding: var(--spacing-lg) 0; }
+.header__container { display: flex; justify-content: space-between; align-items: center; }
+.header__logo { font-size: 1.8rem; color: #fff; text-shadow: 0 0 15px var(--color-accent); }
+.header__subtitle { color: var(--color-text-muted); font-size: 0.9rem; }
+.main-content { padding: var(--spacing-lg) 0; }
+.footer { padding: var(--spacing-lg) 0; text-align: center; color: var(--color-text-muted); font-size: 0.9rem; margin-top: 40px; }
 .footer p:first-child { margin-bottom: var(--spacing-sm); }
 
 
 /* ==========================================================================
-   4. Server Grid (Mobile-First)
+   4. NEW: Host Status Panel
+   ========================================================================== */
+.host-status {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+@media (min-width: 768px) {
+    .host-status { grid-template-columns: repeat(3, 1fr); }
+}
+.host-status__item {
+    display: grid;
+    grid-template-areas: "label value" "bar bar";
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+.host-status__label { font-size: 0.9rem; color: var(--color-text-muted); grid-area: label; }
+.host-status__value { font-size: 1.1rem; font-weight: 600; grid-area: value; text-align: right; }
+.host-status__bar { grid-area: bar; width: 100%; height: 8px; background-color: rgba(0,0,0,0.2); border-radius: 4px; overflow: hidden; }
+.host-status__bar-fill { height: 100%; width: 0%; background-color: var(--color-accent); border-radius: 4px; transition: width 0.5s ease; }
+
+
+/* ==========================================================================
+   5. Server Grid & 3D Flip Card
    ========================================================================== */
 .server-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--spacing-lg);
 }
-@media (min-width: 640px) {
-  .server-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (min-width: 1024px) {
-  .server-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
+@media (min-width: 640px) { .server-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .server-grid { grid-template-columns: repeat(3, 1fr); } }
 
-/* ==========================================================================
-   5. 3D Flip Card Styles
-   ========================================================================== */
 .card-container {
   perspective: 1000px;
   opacity: 0;
@@ -121,12 +121,7 @@ h1,h2,h3,h4,p { margin: 0; }
   animation: cardFadeIn 0.6s ease forwards;
   animation-delay: var(--animation-delay, 0s);
 }
-@keyframes cardFadeIn {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+@keyframes cardFadeIn { to { opacity: 1; transform: translateY(0); } }
 
 .server-card {
   position: relative;
@@ -134,11 +129,8 @@ h1,h2,h3,h4,p { margin: 0; }
   min-height: 280px;
   transform-style: preserve-3d;
   transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
-  cursor: pointer;
 }
-.card-container.is-flipped .server-card {
-  transform: rotateY(180deg);
-}
+.card-container.is-flipped .server-card { transform: rotateY(180deg); }
 
 .card__front, .card__back {
   position: absolute;
@@ -146,20 +138,17 @@ h1,h2,h3,h4,p { margin: 0; }
   height: 100%;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  
   display: flex;
   flex-direction: column;
   padding: var(--spacing-lg);
-  
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  
   transition: border-color 0.3s ease;
 }
-.card-container:hover .card__front {
+.card-container:hover .card__front:not(.is-flipped) {
     border-color: rgba(0, 255, 157, 0.3);
     box-shadow: var(--shadow-glow);
 }
@@ -169,124 +158,55 @@ h1,h2,h3,h4,p { margin: 0; }
   justify-content: center;
   text-align: center;
 }
-.card__back-title {
-    margin-bottom: var(--spacing-sm);
-    color: var(--color-accent);
-}
-.card__back-text {
-    color: var(--color-text-muted);
-    margin-bottom: var(--spacing-lg);
-}
-.btn-flip {
-    background-color: rgba(255,255,255,0.1);
-    border: 1px solid var(--color-border);
-    color: var(--color-text);
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: 8px;
-    cursor: pointer;
-}
 
 /* ==========================================================================
    6. Card Content Styles
    ========================================================================== */
-.server-card__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--spacing-sm);
-}
-.server-card__name {
-    font-size: 1.5rem;
-    margin-bottom: auto;
-    padding: var(--spacing-md) 0;
-}
-.server-card__stats {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
-}
-.stat-chart {
-    height: 70px;
-}
-.stat {
-    display: grid;
-    grid-template-columns: 60px 1fr;
-    align-items: center;
-    gap: var(--spacing-sm);
-}
-.stat__label {
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-}
-.stat__value {
-    font-weight: 600;
-}
-.status-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-}
+.server-card__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-sm); }
+.server-card__name { font-size: 1.5rem; margin-bottom: auto; padding: var(--spacing-md) 0; }
+.server-card__stats { display: flex; flex-direction: column; gap: var(--spacing-md); }
+.stat-chart { height: 70px; }
+.status-dot { width: 12px; height: 12px; border-radius: 50%; }
 .server-card[data-status="running"] .status-dot {
     background-color: var(--status-online);
     animation: pulse 2s infinite cubic-bezier(0.66, 0, 0, 1);
 }
-@keyframes pulse {
-    to { box-shadow: 0 0 0 10px rgba(0, 255, 157, 0); }
-}
-.server-card[data-status="stopped"] .status-dot {
-    background-color: var(--status-offline);
-}
-.server-card__type {
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    font-weight: 600;
-}
-.status-text {
-    font-weight: 600;
-}
+@keyframes pulse { to { box-shadow: 0 0 0 10px rgba(0, 255, 157, 0); } }
+.server-card[data-status="stopped"] .status-dot { background-color: #555; }
+.server-card__type { font-size: 0.9rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600; }
+.status-text { font-weight: 600; }
 .server-card[data-status="running"] .status-text { color: var(--status-online); }
 .server-card[data-status="stopped"] .status-text { color: var(--status-offline); }
-
+.stat { display: grid; grid-template-columns: 60px 1fr; align-items: center; gap: var(--spacing-sm); }
+.stat__label { font-size: 0.9rem; color: var(--color-text-muted); }
+.stat__value { font-weight: 600; }
 
 /* ==========================================================================
-   7. Other UI Elements
+   7. NEW: VM Controls on Card Back
    ========================================================================== */
-.btn-refresh {
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    color: var(--color-text-muted);
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+.card__back-title { margin-bottom: var(--spacing-sm); color: var(--color-accent); }
+.vm-controls { display: flex; gap: var(--spacing-sm); margin: var(--spacing-md) 0; }
+.vm-control-btn {
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-family: var(--font-family-body);
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    transition: transform 0.2s, background-color 0.2s;
 }
-.btn-refresh:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
-    transform: rotate(90deg) scale(1.1);
-    box-shadow: var(--shadow-glow);
-}
+.vm-control-btn:hover { transform: scale(1.05); }
+.btn-start { background-color: var(--color-accent); color: #000; }
+.btn-stop { background-color: var(--color-danger); color: #fff; }
+.btn-reboot { background-color: var(--color-warning); color: #000; }
+.vm-control-btn[disabled] { cursor: not-allowed; opacity: 0.5; }
+.vm-controls-status { min-height: 20px; color: var(--color-text-muted); font-size: 0.9rem; }
+.btn-flip { position: absolute; bottom: var(--spacing-lg); right: var(--spacing-lg); background: none; border: none; color: var(--color-text-muted); cursor: pointer; }
 
-.loading-indicator, .error-state {
-    text-align: center;
-    padding: 60px 0;
-}
-.error-state h3 { color: var(--status-offline); margin-bottom: 8px; }
-.spinner {
-    width: 48px;
-    height: 48px;
-    border: 5px solid var(--color-border);
-    border-bottom-color: var(--color-accent);
-    border-radius: 50%;
-    display: inline-block;
-    animation: rotation 1s linear infinite;
-    margin-bottom: 16px;
-}
-@keyframes rotation {
-    to { transform: rotate(360deg); }
-}
+/* Other UI Elements */
+.btn-refresh { background-color: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text-muted); width: 50px; height: 50px; border-radius: 50%; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+.btn-refresh:hover { color: var(--color-accent); border-color: var(--color-accent); transform: rotate(90deg) scale(1.1); box-shadow: var(--shadow-glow); }
+.loading-indicator, .error-state { text-align: center; padding: 60px 0; }
+.error-state h3 { color: var(--color-danger); margin-bottom: 8px; }
+.spinner { width: 48px; height: 48px; border: 5px solid var(--color-border); border-bottom-color: var(--color-accent); border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite; margin-bottom: 16px; }
+@keyframes rotation { to { transform: rotate(360deg); } }

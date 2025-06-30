@@ -1,7 +1,6 @@
 /**
  * @file api.js
- * @description This file simulates fetching data from a Proxmox server API.
- * This version simulates fluctuating resource usage for the graphs.
+ * @description Simulates fetching data from a Proxmox server API.
  */
 
 const mockServerData = [
@@ -12,34 +11,48 @@ const mockServerData = [
     { vmid: 103, name: 'CSGO-Retakes-VM', status: 'running', type: 'qemu', maxcpu: 4, maxmem: 2147483648, uptime: 3600 },
 ];
 
-/**
- * Generates randomized resource usage data for a more dynamic simulation.
- */
-function getSimulatedUsage(server) {
-    if (server.status !== 'running') {
-        return { cpu: 0, mem: 0 };
+// NEW: Mock data for the host system
+const mockHostData = {
+    cpu: 0.35, // 35%
+    memory: {
+        used: 68719476736, // 64GB
+        total: 137438953472 // 128GB
+    },
+    storage: {
+        used: 400000000000, // 400GB
+        total: 1000000000000 // 1TB
     }
-    // Simulate some realistic-looking random data
-    const cpu = Math.random() * 0.6 + 0.1; // CPU usage between 10% and 70%
-    const mem = Math.random() * (server.maxmem * 0.8) + (server.maxmem * 0.1); // RAM between 10% and 90%
-    return { cpu, mem };
+};
+
+function getSimulatedUsage(server) {
+    if (server.status !== 'running') return { cpu: 0, mem: 0 };
+    return { 
+        cpu: Math.random() * 0.7 + 0.1, 
+        mem: Math.random() * (server.maxmem * 0.8) + (server.maxmem * 0.1) 
+    };
 }
 
 /**
- * Fetches server status data.
- * @returns {Promise<Array<Object>>} A promise that resolves with the server data.
+ * Fetches status for all VMs/containers and the host.
+ * @returns {Promise<{servers: Array<Object>, host: Object}>}
  */
 export function fetchServerData() {
-    console.log("Fetching server data... (simulated)");
+    console.log("Fetching all server and host data... (simulated)");
 
     return new Promise((resolve) => {
         setTimeout(() => {
-            // Add simulated usage to each server
-            const dataWithUsage = mockServerData.map(server => ({
+            const serversWithUsage = mockServerData.map(server => ({
                 ...server,
                 ...getSimulatedUsage(server)
             }));
-            resolve(dataWithUsage);
-        }, 800); // Simulate a network delay
+            
+            // Also simulate slight fluctuations in host data
+            const dynamicHostData = {
+                ...mockHostData,
+                cpu: Math.random() * 0.4 + 0.2, // Simulate host CPU between 20-60%
+            };
+
+            resolve({ servers: serversWithUsage, host: dynamicHostData });
+        }, 800);
     });
 }
