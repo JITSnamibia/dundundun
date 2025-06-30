@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fix Website 404 Errors & Google Indexing Issues - Complete Guide</title>
-    <meta name="description" content="Step-by-step guide to resolve 404 errors and Google Search Console indexing issues for Canva-designed websites on GoDaddy.">
-    <link rel="stylesheet" href="style.css">
+    <title>The Ultimate Guide to Fixing Website Indexing Issues</title>
+    <meta name="description" content="A complete, interactive guide to resolve 404 errors, robots.txt issues, and Google Search Console indexing problems.">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
     <div class="progress-bar" id="progressBar">
@@ -19,10 +19,11 @@
                     <h2>SEO Fix Guide</h2>
                 </div>
                 <nav class="header__nav" aria-label="Main Navigation">
-                    <a href="#understanding" class="nav-link">Understanding 404</a>
-                    <a href="#console-setup" class="nav-link">Search Console</a>
+                    <a href="#understanding" class="nav-link">Understanding</a>
+                    <a href="#console-setup" class="nav-link">Console</a>
                     <a href="#sitemap" class="nav-link">Sitemap</a>
-                    <a href="#troubleshooting" class="nav-link">Troubleshooting</a>
+                    <a href="#robots-txt" class="nav-link">Robots.txt</a>
+                    <a href="#redirects" class="nav-link">Redirects</a>
                     <a href="#checklist" class="nav-link">Checklist</a>
                 </nav>
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle color theme">
@@ -36,11 +37,8 @@
         <section class="hero" id="home">
             <div class="container">
                 <div class="hero__content">
-                    <h1 class="hero__title">Complete Guide to Fixing Website 404 Errors and Google Search Console Indexing Issues</h1>
-                    <p class="hero__subtitle">Step-by-step solution for Canva-designed websites on GoDaddy with persistent indexing problems.</p>
-                    <div class="hero__intro">
-                        <p>A 404 error means that when you (or Google) try to visit your page, the server responds that the page does not exist. This comprehensive guide will help you resolve indexing issues with your Canva-designed website purchased via GoDaddy and successfully link it to Google Search Console.</p>
-                    </div>
+                    <h1 class="hero__title">The Ultimate Guide to Fixing Website Indexing Issues</h1>
+                    <p class="hero__subtitle">A complete, interactive guide to resolve 404 errors, robots.txt issues, and Google Search Console indexing problems.</p>
                     <a href="#understanding" class="btn btn--primary btn--lg hero__cta">Start Fixing Now</a>
                 </div>
             </div>
@@ -49,11 +47,11 @@
         <section class="toc-section">
             <div class="container">
                 <div class="toc">
-                    <h3>Quick Navigation</h3>
+                    <h3>Guide Contents</h3>
                     <div class="toc__grid">
                         <a href="#understanding" class="toc__item">
                             <span class="toc__number">1</span>
-                            <span class="toc__title">Understanding the 404 Error</span>
+                            <span class="toc__title">Understanding 404 Errors & DNS</span>
                         </a>
                         <a href="#console-setup" class="toc__item">
                             <span class="toc__number">2</span>
@@ -61,15 +59,19 @@
                         </a>
                         <a href="#sitemap" class="toc__item">
                             <span class="toc__number">3</span>
-                            <span class="toc__title">Sitemap Creation and Submission</span>
+                            <span class="toc__title">Sitemap Creation & Submission</span>
                         </a>
-                        <a href="#troubleshooting" class="toc__item">
+                        <a href="#robots-txt" class="toc__item">
                             <span class="toc__number">4</span>
-                            <span class="toc__title">Troubleshooting Common Issues</span>
+                            <span class="toc__title">Creating a `robots.txt` File</span>
+                        </a>
+                        <a href="#redirects" class="toc__item">
+                            <span class="toc__number">5</span>
+                            <span class="toc__title">Fixing 404s with Redirects</span>
                         </a>
                         <a href="#checklist" class="toc__item">
-                            <span class="toc__number">5</span>
-                            <span class="toc__title">Final Checklist</span>
+                            <span class="toc__number">6</span>
+                            <span class="toc__title">Final Readiness Checklist</span>
                         </a>
                     </div>
                 </div>
@@ -81,11 +83,10 @@
                 <section class="step" id="understanding">
                     <div class="step__header">
                         <span class="step__number">1</span>
-                        <h2 class="step__title">Understanding the 404 Error</h2>
+                        <h2 class="step__title">Understanding 404 Errors & DNS</h2>
                     </div>
                     <div class="step__content">
-                        <p class="step__description">A 404 error means that when you (or Google) try to visit the page (e.g., celticphotography.org), the server responds that the page does not exist. This can happen even after publishing if:</p>
-                        
+                        <p class="step__description">A <span class="glossary-term" data-term="404-error">404 error</span> means the server could not find the requested page. This can happen even after publishing if there is a misconfiguration in your <span class="glossary-term" data-term="dns">DNS</span> records.</p>
                         <div class="issue-list">
                             <div class="issue-item">
                                 <span class="issue-icon">⚠️</span>
@@ -93,17 +94,12 @@
                             </div>
                             <div class="issue-item">
                                 <span class="issue-icon">⚠️</span>
-                                <p>The site has not been properly published or propagated.</p>
-                            </div>
-                            <div class="issue-item">
-                                <span class="issue-icon">⚠️</span>
-                                <p>There's a misconfiguration in domain settings or DNS records.</p>
+                                <p>DNS records (<span class="glossary-term" data-term="cname-record">CNAME</span> or <span class="glossary-term" data-term="a-record">A records</span>) are incorrect.</p>
                             </div>
                         </div>
-
                         <div class="action-box">
                             <h4>Action Required</h4>
-                            <p>Double-check that your domain (from GoDaddy) is correctly connected to your Canva website. Canva provides instructions for connecting domains—make sure all DNS records (especially CNAME or A records) are set up exactly as Canva requires. After updating DNS, it may take several hours (sometimes up to 48 hours) for changes to propagate globally.</p>
+                            <p>Double-check that your domain from GoDaddy is correctly connected to your Canva website. Ensure all DNS records are set up exactly as Canva requires. It can take up to 48 hours for changes to propagate.</p>
                         </div>
                     </div>
                 </section>
@@ -114,69 +110,103 @@
                         <h2 class="step__title">Google Search Console Setup</h2>
                     </div>
                     <div class="step__content">
-                        <p class="step__description">To get indexed, your site must be accessible and verified in Google Search Console. Here's how to ensure this is done right:</p>
-                        
+                        <p class="step__description">To get indexed, your site must be verified in <span class="glossary-term" data-term="google-search-console">Google Search Console</span>. This is non-negotiable.</p>
                         <div class="procedure-list">
-                            <div class="procedure-item">
-                                <span class="procedure-number">1</span>
-                                <div class="procedure-content">
-                                    <h4>Add your domain to Google Search Console</h4>
-                                    <p>Use the 'Domain' property option for full domain coverage.</p>
-                                </div>
-                            </div>
-                            <div class="procedure-item">
-                                <span class="procedure-number">2</span>
-                                <div class="procedure-content">
-                                    <h4>Get TXT record from Google</h4>
-                                    <p>Google will give you a TXT record to add to your domain's DNS settings on GoDaddy.</p>
-                                </div>
-                            </div>
-                            <div class="procedure-item">
-                                <span class="procedure-number">3</span>
-                                <div class="procedure-content">
-                                    <h4>Wait and verify</h4>
-                                    <p>After adding the TXT record, wait for DNS propagation, then verify in Search Console.</p>
-                                </div>
-                            </div>
+                            <div class="procedure-item"><span class="procedure-number">1</span><div class="procedure-content"><h4>Add your domain to Search Console</h4><p>Use the 'Domain' property option for full coverage.</p></div></div>
+                            <div class="procedure-item"><span class="procedure-number">2</span><div class="procedure-content"><h4>Get the verification TXT record</h4><p>Google will give you a <span class="glossary-term" data-term="txt-record">TXT record</span> to add to your DNS settings on GoDaddy.</p></div></div>
+                            <div class="procedure-item"><span class="procedure-number">3</span><div class="procedure-content"><h4>Wait and verify</h4><p>After adding the record, wait for propagation, then click "Verify" in Search Console.</p></div></div>
                         </div>
-
-                        <div class="warning-box">
-                            <h4>⚠️ Important</h4>
-                            <p>If Google Search Console cannot verify your domain, it will not index your site. Use a tool like DNS Checker to confirm the TXT record is visible globally.</p>
+                    </div>
+                </section>
+                
+                <section class="step" id="sitemap">
+                    <div class="step__header">
+                        <span class="step__number">3</span>
+                        <h2 class="step__title">Sitemap Creation & Submission</h2>
+                    </div>
+                    <div class="step__content">
+                        <p class="step__description">A <span class="glossary-term" data-term="sitemap">sitemap</span> helps Google discover your pages. If Canva doesn't create one, you may need to do it manually.</p>
+                        <div class="steps-grid">
+                            <div class="step-card"><h4>Check for a sitemap</h4><p>Look for a sitemap at `yourdomain.com/sitemap.xml`.</p></div>
+                            <div class="step-card"><h4>Create if needed</h4><p>Use a third-party generator if one is not available.</p></div>
+                            <div class="step-card"><h4>Submit to Google</h4><p>Submit your sitemap in Google Search Console under 'Sitemaps'.</p></div>
                         </div>
                     </div>
                 </section>
 
-                </div>
+                <section class="step" id="robots-txt">
+                    <div class="step__header">
+                        <span class="step__number">4</span>
+                        <h2 class="step__title">Creating a `robots.txt` File</h2>
+                    </div>
+                    <div class="step__content">
+                        <p class="step__description">A <span class="glossary-term" data-term="robots-txt">robots.txt</span> file tells search engines which pages the crawler can or can't request. It's crucial for managing crawl budget and preventing unimportant pages from being indexed.</p>
+                        <h4>Basic `robots.txt` for a Canva Site</h4>
+                        <p>For most simple websites, you want Google to be able to crawl everything. A basic file that allows all access looks like this:</p>
+                        <div class="code-block"><pre><code>User-agent: *
+Allow: /</code></pre></div>
+                        <p>Create a plain text file named `robots.txt` with this content and upload it to the root directory of your website (e.g., `yourdomain.com/robots.txt`).</p>
+                    </div>
+                </section>
+                
+                <section class="step" id="redirects">
+                    <div class="step__header">
+                        <span class="step__number">5</span>
+                        <h2 class="step__title">Fixing 404s with Redirects</h2>
+                    </div>
+                    <div class="step__content">
+                        <p class="step__description">If you've deleted a page or changed its URL, the correct solution is to set up a <span class="glossary-term" data-term="301-redirect">301 redirect</span>. This forwards users and search engines from the old URL to the new one, preserving link equity.</p>
+                        <h4>Using `.htaccess` for Redirects</h4>
+                        <p>If your hosting provider uses an Apache server, you can add rules to your <span class="glossary-term" data-term="htaccess">.htaccess</span> file. To redirect an old page to a new one, add this line:</p>
+                        <div class="code-block"><pre><code>Redirect 301 /old-page.html https://www.yourdomain.com/new-page.html</code></pre></div>
+                        <div class="warning-box">
+                            <h4>⚠️ Be Careful</h4>
+                            <p>Editing your `.htaccess` file can break your site if done incorrectly. Always make a backup before making changes.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="step" id="checklist">
+                    <div class="checklist-header">
+                        <h2 class="step__title">Final Readiness Checklist</h2>
+                        <div class="checklist-score" id="checklistScore">0%</div>
+                    </div>
+                    <div class="checklist-progress-bar">
+                        <div class="checklist-progress-bar__fill" id="checklistProgress"></div>
+                    </div>
+                    <div class="checklist">
+                        <div class="checklist-item"><input type="checkbox" id="check1" class="checklist-checkbox"><label for="check1">Domain DNS records match Canva's instructions exactly.</label></div>
+                        <div class="checklist-item"><input type="checkbox" id="check2" class="checklist-checkbox"><label for="check2">Domain is verified in Google Search Console.</label></div>
+                        <div class="checklist-item"><input type="checkbox" id="check3" class="checklist-checkbox"><label for="check3">Sitemap has been submitted to Google Search Console.</label></div>
+                        <div class="checklist-item"><input type="checkbox" id="check4" class="checklist-checkbox"><label for="check4">`robots.txt` is in place and allows crawling.</label></div>
+                        <div class="checklist-item"><input type="checkbox" id="check5" class="checklist-checkbox"><label for="check5">Website homepage loads without a 404 error in an incognito window.</label></div>
+                        <div class="checklist-item"><input type="checkbox" id="check6" class="checklist-checkbox"><label for="check6">301 redirects are set up for any moved or deleted pages.</label></div>
+                    </div>
+                </section>
+            </div>
         </div>
     </main>
 
     <footer class="footer">
         <div class="container">
-            <div class="footer__content">
-                <div class="footer__section">
-                    <h4>Need More Help?</h4>
-                    <p>If you're still experiencing issues after following this guide, consider reaching out to Canva support or a web developer for personalized assistance.</p>
-                </div>
-                <div class="footer__section">
-                    <h4>Additional Resources</h4>
-                    <ul>
-                        <li><a href="https://support.canva.com" target="_blank">Canva Support Center</a></li>
-                        <li><a href="https://support.google.com/webmasters" target="_blank">Google Search Console Help</a></li>
-                        <li><a href="https://godaddy.com/help" target="_blank">GoDaddy Help Center</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer__bottom">
-                <p>&copy; 2025 SEO Fix Guide. This guide is provided for educational purposes.</p>
-            </div>
+            <p>&copy; 2025 SEO Fix Guide. An interactive educational tool.</p>
         </div>
     </footer>
+    
+    <div class="modal" id="glossaryModal">
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3 class="modal__title" id="modalTerm"></h3>
+                <button class="modal__close" id="modalClose" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal__body">
+                <p id="modalDefinition"></p>
+            </div>
+        </div>
+    </div>
 
-    <a href="#home" class="back-to-top" id="backToTop" aria-label="Back to top">
-        &#8679;
-    </a>
+    <a href="#home" class="back-to-top" id="backToTop" aria-label="Back to top">&#8679;</a>
 
-    <script src="app.js"></script>
+    <script src="assets/js/app.js" type="module"></script>
 </body>
 </html>
