@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Website 404 Errors & Google Indexing Issues - Complete Guide</title>
+    <meta name="description" content="Step-by-step guide to resolve 404 errors and Google Search Console indexing issues for Canva-designed websites on GoDaddy.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar">
+        <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header__content">
+                <div class="header__logo">
+                    <h2>SEO Fix Guide</h2>
+                </div>
+                <nav class="header__nav">
+                    <a href="#understanding" class="nav-link">Understanding 404</a>
+                    <a href="#console-setup" class="nav-link">Search Console</a>
+                    <a href="#sitemap" class="nav-link">Sitemap</a>
+                    <a href="#troubleshooting" class="nav-link">Troubleshooting</a>
+                    <a href="#checklist" class="nav-link">Checklist</a>
+                </nav>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <span class="theme-toggle__icon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero__content">
+                <h1 class="hero__title">Complete Guide to Fixing Website 404 Errors and Google Search Console Indexing Issues</h1>
+                <p class="hero__subtitle">Step-by-step solution for Canva-designed websites on GoDaddy with persistent indexing problems</p>
+                <div class="hero__intro">
+                    <p>A 404 error means that when you (or Google) try to visit your page, the server responds that the page does not exist. This comprehensive guide will help you resolve indexing issues with your Canva-designed website purchased via GoDaddy and successfully link it to Google Search Console.</p>
+                </div>
+                <a href="#understanding" class="btn btn--primary btn--lg hero__cta">Start Fixing Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Table of Contents -->
+    <section class="toc-section">
+        <div class="container">
+            <div class="toc">
+                <h3>Quick Navigation</h3>
+                <div class="toc__grid">
+                    <a href="#understanding" class="toc__item">
+                        <span class="toc__number">1</span>
+                        <span class="toc__title">Understanding the 404 Error</span>
+                    </a>
+                    <a href="#console-setup" class="toc__item">
+                        <span class="toc__number">2</span>
+                        <span class="toc__title">Google Search Console Setup</span>
+                    </a>
+                    <a href="#sitemap" class="toc__item">
+                        <span class="toc__number">3</span>
+                        <span class="toc__title">Sitemap Creation and Submission</span>
+                    </a>
+                    <a href="#troubleshooting" class="toc__item">
+                        <span class="toc__number">4</span>
+                        <span class="toc__title">Troubleshooting Common Issues</span>
+                    </a>
+                    <a href="#checklist" class="toc__item">
+                        <span class="toc__number">5</span>
+                        <span class="toc__title">Final Checklist</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Step 1 -->
+            <section class="step" id="understanding">
+                <div class="step__header">
+                    <span class="step__number">1</span>
+                    <h2 class="step__title">Understanding the 404 Error</h2>
+                </div>
+                <div class="step__content">
+                    <p class="step__description">A 404 error means that when you (or Google) try to visit the page (e.g., celticphotography.org), the server responds that the page does not exist. This can happen even after publishing if:</p>
+                    
+                    <div class="issue-list">
+                        <div class="issue-item">
+                            <span class="issue-icon">⚠️</span>
+                            <p>The domain is not correctly connected to the published website</p>
+                        </div>
+                        <div class="issue-item">
+                            <span class="issue-icon">⚠️</span>
+                            <p>The site has not been properly published or propagated</p>
+                        </div>
+                        <div class="issue-item">
+                            <span class="issue-icon">⚠️</span>
+                            <p>There's a misconfiguration in domain settings or DNS records</p>
+                        </div>
+                    </div>
+
+                    <div class="action-box">
+                        <h4>Action Required</h4>
+                        <p>Double-check that your domain (from GoDaddy) is correctly connected to your Canva website. Canva provides instructions for connecting domains—make sure all DNS records (especially CNAME or A records) are set up exactly as Canva requires. After updating DNS, it may take several hours (sometimes up to 48 hours) for changes to propagate globally.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 2 -->
+            <section class="step" id="console-setup">
+                <div class="step__header">
+                    <span class="step__number">2</span>
+                    <h2 class="step__title">Google Search Console Setup</h2>
+                </div>
+                <div class="step__content">
+                    <p class="step__description">To get indexed, your site must be accessible and verified in Google Search Console. Here's how to ensure this is done right:</p>
+                    
+                    <div class="procedure-list">
+                        <div class="procedure-item">
+                            <span class="procedure-number">1</span>
+                            <div class="procedure-content">
+                                <h4>Add your domain to Google Search Console</h4>
+                                <p>Use the 'Domain' property option for full domain coverage</p>
+                            </div>
+                        </div>
+                        <div class="procedure-item">
+                            <span class="procedure-number">2</span>
+                            <div class="procedure-content">
+                                <h4>Get TXT record from Google</h4>
+                                <p>Google will give you a TXT record to add to your domain's DNS settings on GoDaddy</p>
+                            </div>
+                        </div>
+                        <div class="procedure-item">
+                            <span class="procedure-number">3</span>
+                            <div class="procedure-content">
+                                <h4>Wait and verify</h4>
+                                <p>After adding the TXT record, wait for DNS propagation, then verify in Search Console</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <h4>⚠️ Important</h4>
+                        <p>If Google Search Console cannot verify your domain, it will not index your site. Use a tool like DNS Checker to confirm the TXT record is visible globally.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 3 -->
+            <section class="step" id="sitemap">
+                <div class="step__header">
+                    <span class="step__number">3</span>
+                    <h2 class="step__title">Sitemap Creation and Submission</h2>
+                </div>
+                <div class="step__content">
+                    <p class="step__description">A sitemap helps Google discover your pages. Canva websites may not auto-generate a sitemap, so:</p>
+                    
+                    <div class="steps-grid">
+                        <div class="step-card">
+                            <h4>Check for existing sitemap</h4>
+                            <p>Look for a sitemap at:</p>
+                            <div class="code-block">
+                                <code>https://yourdomain.com/sitemap.xml</code>
+                                <button class="copy-btn" data-copy="https://yourdomain.com/sitemap.xml">Copy</button>
+                            </div>
+                        </div>
+                        <div class="step-card">
+                            <h4>Create if needed</h4>
+                            <p>If not available, create one manually or use a third-party generator</p>
+                        </div>
+                        <div class="step-card">
+                            <h4>Submit to Google</h4>
+                            <p>Submit your sitemap in Google Search Console under 'Sitemaps'</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>💡 Troubleshooting</h4>
+                        <p>If you get errors like 'Couldn't fetch sitemap' or '404,' it means Google can't access the file—double-check the URL and site publishing status.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 4 -->
+            <section class="step" id="troubleshooting">
+                <div class="step__header">
+                    <span class="step__number">4</span>
+                    <h2 class="step__title">Troubleshooting Common Issues</h2>
+                </div>
+                <div class="step__content">
+                    <p class="step__description">If Google Search Console shows a 404 or 'Soft 404' error:</p>
+                    
+                    <div class="troubleshooting-grid">
+                        <div class="trouble-item">
+                            <h4>🔍 Check Page Accessibility</h4>
+                            <p>Make sure your homepage and other key pages are published and accessible in a private browser window (incognito mode)</p>
+                        </div>
+                        <div class="trouble-item">
+                            <h4>🚫 Check Blocking Rules</h4>
+                            <p>Confirm there are no 'noindex' tags or robots.txt rules blocking Googlebot</p>
+                        </div>
+                        <div class="trouble-item">
+                            <h4>🔄 Republish Site</h4>
+                            <p>Try republishing the site from Canva if the site is published but still shows 404</p>
+                        </div>
+                        <div class="trouble-item">
+                            <h4>🧹 Clear Cache</h4>
+                            <p>Clear your browser cache or check from a different device</p>
+                        </div>
+                        <div class="trouble-item">
+                            <h4>⚙️ Verify Settings</h4>
+                            <p>Confirm domain settings on both Canva and GoDaddy</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 5 -->
+            <section class="step" id="checklist">
+                <div class="step__header">
+                    <span class="step__number">5</span>
+                    <h2 class="step__title">Final Checklist</h2>
+                </div>
+                <div class="step__content">
+                    <p class="step__description">Before considering the process complete, verify these essential items:</p>
+                    
+                    <div class="checklist">
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check1" class="checklist-checkbox">
+                            <label for="check1">Domain DNS records: Confirm they match Canva's instructions</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check2" class="checklist-checkbox">
+                            <label for="check2">Google Search Console: Domain verified and sitemap submitted</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check3" class="checklist-checkbox">
+                            <label for="check3">Website accessibility: Homepage loads without 404 in incognito mode</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check4" class="checklist-checkbox">
+                            <label for="check4">No blocking directives: No 'noindex' tags or robots.txt blocks</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check5" class="checklist-checkbox">
+                            <label for="check5">Wait for propagation: DNS and indexing can take up to 48 hours</label>
+                        </div>
+                    </div>
+
+                    <div class="final-note">
+                        <h4>🎯 Key Point</h4>
+                        <p>A 404 error means Google cannot index your site until the page is live and accessible. Fix the domain connection first, then proceed with Search Console and sitemap steps.</p>
+                    </div>
+
+                    <div class="still-issues">
+                        <h4>Still Having Issues?</h4>
+                        <p>If after all this, the site still shows 404: The most likely cause is a misconfiguration in domain connection between GoDaddy and Canva. Double-check the DNS records and Canva's publishing status. If using a custom domain, ensure Canva recognizes it as the primary domain for the site.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Tools Section -->
+    <section class="tools-section">
+        <div class="container">
+            <h2>Helpful Tools</h2>
+            <div class="tools-grid">
+                <a href="https://dnschecker.org" target="_blank" class="tool-card">
+                    <h4>DNS Checker</h4>
+                    <p>Check DNS propagation globally</p>
+                </a>
+                <a href="https://search.google.com/search-console" target="_blank" class="tool-card">
+                    <h4>Google Search Console</h4>
+                    <p>Monitor your site's search performance</p>
+                </a>
+                <a href="https://www.canva.com" target="_blank" class="tool-card">
+                    <h4>Canva</h4>
+                    <p>Manage your website settings</p>
+                </a>
+                <a href="https://godaddy.com" target="_blank" class="tool-card">
+                    <h4>GoDaddy</h4>
+                    <p>Manage your domain DNS settings</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__section">
+                    <h4>Need More Help?</h4>
+                    <p>If you're still experiencing issues after following this guide, consider reaching out to Canva support or a web developer for personalized assistance.</p>
+                </div>
+                <div class="footer__section">
+                    <h4>Additional Resources</h4>
+                    <ul>
+                        <li><a href="https://support.canva.com" target="_blank">Canva Support Center</a></li>
+                        <li><a href="https://support.google.com/webmasters" target="_blank">Google Search Console Help</a></li>
+                        <li><a href="https://godaddy.com/help" target="_blank">GoDaddy Help Center</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>&copy; 2025 SEO Fix Guide. This guide is provided for educational purposes.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
