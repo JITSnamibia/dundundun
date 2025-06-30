@@ -55,25 +55,34 @@
     </footer>
 
     <template id="server-card-template">
-        <div class="server-card">
-            <div class="server-card__header">
-                <span class="server-card__type"></span>
-                <div class="server-card__status">
-                    <div class="status-dot"></div>
-                    <span class="status-text"></span>
+        <div class="card-container">
+            <div class="server-card">
+                <div class="card__front">
+                    <div class="server-card__header">
+                        <span class="server-card__type"></span>
+                        <div class="server-card__status">
+                            <div class="status-dot"></div>
+                            <span class="status-text"></span>
+                        </div>
+                    </div>
+                    <h3 class="server-card__name"></h3>
+                    <div class="server-card__stats">
+                        <div class="stat-chart">
+                            <canvas class="cpu-chart"></canvas>
+                        </div>
+                        <div class="stat-chart">
+                            <canvas class="ram-chart"></canvas>
+                        </div>
+                        <div class="stat">
+                            <span class="stat__label">Uptime</span>
+                            <span class="stat__value uptime"></span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <h3 class="server-card__name"></h3>
-            <div class="server-card__stats">
-                <div class="stat-chart">
-                    <canvas class="cpu-chart"></canvas>
-                </div>
-                <div class="stat-chart">
-                    <canvas class="ram-chart"></canvas>
-                </div>
-                <div class="stat">
-                    <span class="stat__label">Uptime</span>
-                    <span class="stat__value uptime"></span>
+                <div class="card__back">
+                    <h4 class="card__back-title">VM Controls</h4>
+                    <p class="card__back-text">Future home for Start, Stop, and Reboot buttons.</p>
+                    <button class="btn-flip" title="Flip back">Flip</button>
                 </div>
             </div>
         </div>

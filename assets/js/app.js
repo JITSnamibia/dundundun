@@ -22,33 +22,24 @@ document.addEventListener('DOMContentLoaded', () => {
         
         async loadData() {
             const isFirstLoad = this.charts.size === 0;
-            if (isFirstLoad) {
-                this.setLoading(true);
-            }
+            if (isFirstLoad) this.setLoading(true);
 
             try {
                 const servers = await fetchServerData();
-                // Pass isFirstLoad to render function for animations
                 this.render(servers, isFirstLoad);
                 this.setError(false);
             } catch (error) {
                 console.error("Error fetching server data:", error);
                 this.setError(true);
             } finally {
-                if (isFirstLoad) {
-                    this.setLoading(false);
-                }
+                if (isFirstLoad) this.setLoading(false);
             }
         },
         
         setLoading(isLoading) {
             this.elements.loadingIndicator.style.display = isLoading ? 'block' : 'none';
-            if (isLoading) {
-                this.elements.serverGrid.style.display = 'none';
-                this.elements.errorState.style.display = 'none';
-            } else {
-                this.elements.serverGrid.style.display = 'grid';
-            }
+            this.elements.serverGrid.style.display = isLoading ? 'none' : 'grid';
+            if (isLoading) this.elements.errorState.style.display = 'none';
         },
 
         setError(hasError) {
@@ -57,62 +48,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
         render(servers, isFirstLoad) {
             servers.forEach((server, index) => {
-                const vmid = server.vmid;
-                const serverExists = this.charts.has(vmid);
-
-                if (!serverExists) {
-                    // Pass index for animation delay
+                if (!this.charts.has(server.vmid)) {
                     this.createServerCard(server, index);
                 } else {
-                    this.updateChart(vmid, server);
+                    this.updateServerCard(server.vmid, server);
                 }
             });
             this.elements.lastUpdated.textContent = new Date().toLocaleTimeString();
         },
 
         createServerCard(server, index) {
-            const card = this.elements.template.content.cloneNode(true);
-            const serverCard = card.querySelector('.server-card');
+            const cardTemplate = this.elements.template.content.cloneNode(true);
+            const cardContainerEl = cardTemplate.querySelector('.card-container');
+            const serverCardEl = cardTemplate.querySelector('.server-card');
             
-            // NEW: Set staggered animation delay
-            serverCard.style.setProperty('--animation-delay', `${index * 100}ms`);
+            cardContainerEl.style.setProperty('--animation-delay', `${index * 100}ms`);
             
-            serverCard.dataset.vmid = server.vmid;
+            serverCardEl.addEventListener('click', (e) => {
+                // Prevent flipping if a button on the back is clicked
+                if (e.target.classList.contains('btn-flip')) {
+                     cardContainerEl.classList.remove('is-flipped');
+                } else if (e.target.closest('.card__front')) {
+                    // Only flip if the front of the card is clicked
+                    cardContainerEl.classList.add('is-flipped');
+                }
+            });
+
+            this.elements.serverGrid.appendChild(cardTemplate);
             
-            const cpuCanvas = card.querySelector('.cpu-chart');
-            const ramCanvas = card.querySelector('.ram-chart');
-            
-            this.elements.serverGrid.appendChild(card);
-            
+            const cpuCanvas = serverCardEl.querySelector('.cpu-chart');
+            const ramCanvas = serverCardEl.querySelector('.ram-chart');
             const chartColors = this.getChartColors(server.status);
-            const cpuChart = this.createChart(cpuCanvas, 'CPU Usage', chartColors);
-            const ramChart = this.createChart(ramCanvas, 'Memory', chartColors);
+            const cpuChart = this.createChart(cpuCanvas, chartColors);
+            const ramChart = this.createChart(ramCanvas, chartColors);
             
-            this.charts.set(server.vmid, { cpuChart, ramChart, serverCard });
-            this.updateChart(server.vmid, server);
+            this.charts.set(server.vmid, { cpuChart, ramChart, serverCardEl });
+            this.updateServerCard(server.vmid, server);
         },
 
-        updateChart(vmid, serverData) {
-            const { cpuChart, ramChart, serverCard } = this.charts.get(vmid);
+        updateServerCard(vmid, serverData) {
+            const { cpuChart, ramChart, serverCardEl } = this.charts.get(vmid);
             
-            serverCard.dataset.status = serverData.status;
-            serverCard.querySelector('.server-card__type').textContent = `${serverData.type.toUpperCase()} (ID: ${vmid})`;
-            serverCard.querySelector('.status-text').textContent = serverData.status;
-            serverCard.querySelector('.server-card__name').textContent = serverData.name;
-            serverCard.querySelector('.uptime').textContent = this.formatUptime(serverData.uptime);
+            serverCardEl.dataset.status = serverData.status;
+            serverCardEl.querySelector('.server-card__type').textContent = `${serverData.type.toUpperCase()} (ID: ${vmid})`;
+            serverCardEl.querySelector('.status-text').textContent = serverData.status;
+            serverCardEl.querySelector('.server-card__name').textContent = serverData.name;
+            serverCardEl.querySelector('.uptime').textContent = this.formatUptime(serverData.uptime);
 
             const chartColors = this.getChartColors(serverData.status);
             this.addData(cpuChart, serverData.cpu, chartColors);
             this.addData(ramChart, serverData.mem / serverData.maxmem, chartColors);
         },
         
-        createChart(canvas, label, colors) {
+        createChart(canvas, colors) {
             return new Chart(canvas, {
                 type: 'line',
                 data: {
                     labels: Array(20).fill(''),
                     datasets: [{
-                        label: label,
                         data: Array(20).fill(0),
                         borderColor: colors.borderColor,
                         backgroundColor: colors.backgroundColor,
@@ -138,20 +131,16 @@ document.addEventListener('DOMContentLoaded', () => {
             chart.data.datasets[0].borderColor = colors.borderColor;
             chart.data.datasets[0].backgroundColor = colors.backgroundColor;
             chart.update('quiet');
-        },
+s        },
 
         getChartColors(status) {
             const rootStyles = getComputedStyle(document.documentElement);
+            const onlineColor = rootStyles.getPropertyValue('--status-online').trim();
+            const offlineColor = rootStyles.getPropertyValue('--status-offline').trim();
             if (status === 'running') {
-                return {
-                    borderColor: rootStyles.getPropertyValue('--status-online').trim(),
-                    backgroundColor: 'rgba(0, 255, 157, 0.1)',
-                };
+                return { borderColor: onlineColor, backgroundColor: 'rgba(0, 255, 157, 0.1)' };
             }
-            return {
-                borderColor: rootStyles.getPropertyValue('--status-offline').trim(),
-                backgroundColor: 'rgba(255, 77, 77, 0.1)',
-            };
+            return { borderColor: offlineColor, backgroundColor: 'rgba(255, 77, 77, 0.1)' };
         },
 
         formatUptime(seconds) {

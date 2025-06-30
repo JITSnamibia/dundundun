@@ -2,31 +2,25 @@
    1. Design System & Variables
    ========================================================================== */
 :root {
-  /* Colors */
-  --color-background: #0d0d0f; /* Darker background for contrast */
-  --color-surface: rgba(30, 30, 30, 0.5); /* Semi-transparent for glass effect */
-  --color-text: #f0f0f0;
-  --color-text-muted: #999999;
+  --color-background: #0a0a0c;
+  --color-surface: rgba(30, 30, 30, 0.4);
+  --color-text: #eaeaea;
+  --color-text-muted: #888888;
   --color-border: rgba(255, 255, 255, 0.1);
   --color-accent: #00ff9d;
   --color-accent-hover: #00e68e;
 
-  /* Status Colors */
   --status-online: #00ff9d;
   --status-offline: #ff4d4d;
-  --status-starting: #ffc700;
 
-  /* Typography */
   --font-family-heading: 'Orbitron', sans-serif;
   --font-family-body: 'Inter', sans-serif;
   
-  /* Spacing & Radius */
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
-  --radius: 16px; /* Slightly larger radius for a modern look */
+  --radius: 16px;
   
-  /* Shadows */
   --shadow-glow: 0 0 30px rgba(0, 255, 157, 0.15);
 }
 
@@ -34,7 +28,6 @@
    2. Base & Global Styles
    ========================================================================== */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
@@ -43,27 +36,18 @@ body {
   background-color: var(--color-background);
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden; /* Prevent horizontal scroll from aurora */
+  overflow-x: hidden;
   position: relative;
+  
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: pan-grid 60s linear infinite;
 }
-
-/* NEW: Aurora Background Effect */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at 15% 25%, rgba(0, 255, 157, 0.2), transparent 40%),
-                radial-gradient(circle at 85% 75%, rgba(0, 157, 255, 0.2), transparent 40%);
-    z-index: -1;
-    animation: aurora 20s infinite linear;
-}
-
-@keyframes aurora {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+@keyframes pan-grid {
+    0% { background-position: 0 0; }
+    100% { background-position: 50px 50px; }
 }
 
 .container {
@@ -73,26 +57,31 @@ body::before {
   padding: 0 var(--spacing-md);
 }
 
-h1, h2, h3 { font-family: var(--font-family-heading); margin: 0; }
-p { margin: 0; }
+h1,h2,h3,h4,p { margin: 0; }
 
 /* ==========================================================================
-   3. Layout Components (Header, Footer, Main)
+   3. Layout & Header
    ========================================================================== */
 .header {
   padding: var(--spacing-lg) 0;
 }
-
+.header__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 .header__logo {
-  font-size: 2.5rem;
-  color: #fff; /* Brighter logo text */
+  font-size: 1.8rem;
+  color: #fff;
   text-shadow: 0 0 15px var(--color-accent);
 }
-
+.header__subtitle {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
 .main-content {
   padding: var(--spacing-lg) 0;
 }
-
 .footer {
   padding: var(--spacing-lg) 0;
   text-align: center;
@@ -102,32 +91,36 @@ p { margin: 0; }
 }
 .footer p:first-child { margin-bottom: var(--spacing-sm); }
 
+
 /* ==========================================================================
-   4. Status Dashboard Components
+   4. Server Grid (Mobile-First)
    ========================================================================== */
 .server-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: 1fr;
   gap: var(--spacing-lg);
 }
-
-/* UPDATED: Glassmorphism Card Style & Entrance Animation */
-.server-card {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: var(--spacing-lg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
-  /* Entrance Animation */
-  opacity: 0;
-  transform: translateY(20px);
-  animation: cardFadeIn 0.5s ease forwards;
-  animation-delay: var(--animation-delay, 0s); /* JS will set this */
+@media (min-width: 640px) {
+  .server-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .server-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
+/* ==========================================================================
+   5. 3D Flip Card Styles
+   ========================================================================== */
+.card-container {
+  perspective: 1000px;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: cardFadeIn 0.6s ease forwards;
+  animation-delay: var(--animation-delay, 0s);
+}
 @keyframes cardFadeIn {
     to {
         opacity: 1;
@@ -135,53 +128,130 @@ p { margin: 0; }
     }
 }
 
-.server-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: var(--shadow-glow);
-  border-color: rgba(0, 255, 157, 0.3);
+.server-card {
+  position: relative;
+  width: 100%;
+  min-height: 280px;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+  cursor: pointer;
+}
+.card-container.is-flipped .server-card {
+  transform: rotateY(180deg);
 }
 
-.server-card__header {
+.card__front, .card__back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  padding: var(--spacing-lg);
+  
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  transition: border-color 0.3s ease;
+}
+.card-container:hover .card__front {
+    border-color: rgba(0, 255, 157, 0.3);
+    box-shadow: var(--shadow-glow);
+}
+.card__back {
+  transform: rotateY(180deg);
   align-items: center;
-  margin-bottom: var(--spacing-sm);
+  justify-content: center;
+  text-align: center;
 }
-
-.server-card__status {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  font-weight: 600;
+.card__back-title {
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-accent);
 }
-
-/* UPDATED: Status Dot with Pulse Animation */
-.status-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: var(--color-text-muted);
+.card__back-text {
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-lg);
 }
-
-.server-card[data-status="running"] .status-dot {
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(0, 255, 157, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0); }
+.btn-flip {
+    background-color: rgba(255,255,255,0.1);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: 8px;
+    cursor: pointer;
 }
 
 /* ==========================================================================
-   5. FUNCTIONAL DASHBOARD STYLES
+   6. Card Content Styles
    ========================================================================== */
-
-.header__container {
+.server-card__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: var(--spacing-sm);
 }
+.server-card__name {
+    font-size: 1.5rem;
+    margin-bottom: auto;
+    padding: var(--spacing-md) 0;
+}
+.server-card__stats {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+.stat-chart {
+    height: 70px;
+}
+.stat {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+.stat__label {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+.stat__value {
+    font-weight: 600;
+}
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+.server-card[data-status="running"] .status-dot {
+    background-color: var(--status-online);
+    animation: pulse 2s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+@keyframes pulse {
+    to { box-shadow: 0 0 0 10px rgba(0, 255, 157, 0); }
+}
+.server-card[data-status="stopped"] .status-dot {
+    background-color: var(--status-offline);
+}
+.server-card__type {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+}
+.status-text {
+    font-weight: 600;
+}
+.server-card[data-status="running"] .status-text { color: var(--status-online); }
+.server-card[data-status="stopped"] .status-text { color: var(--status-offline); }
+
+
+/* ==========================================================================
+   7. Other UI Elements
+   ========================================================================== */
 .btn-refresh {
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
@@ -205,7 +275,6 @@ p { margin: 0; }
 .loading-indicator, .error-state {
     text-align: center;
     padding: 60px 0;
-    color: var(--color-text-muted);
 }
 .error-state h3 { color: var(--status-offline); margin-bottom: 8px; }
 .spinner {
@@ -215,51 +284,9 @@ p { margin: 0; }
     border-bottom-color: var(--color-accent);
     border-radius: 50%;
     display: inline-block;
-    box-sizing: border-box;
     animation: rotation 1s linear infinite;
     margin-bottom: 16px;
 }
 @keyframes rotation {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    to { transform: rotate(360deg); }
 }
-
-.server-card__type {
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    font-weight: 600;
-}
-.server-card__name {
-    font-size: 1.5rem;
-    margin-bottom: var(--spacing-lg);
-    color: var(--color-text);
-}
-.server-card__stats {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
-}
-.stat-chart {
-    height: 80px;
-}
-.stat {
-    display: grid;
-    grid-template-columns: 60px 1fr;
-    align-items: center;
-    gap: var(--spacing-sm);
-}
-.stat__label {
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-}
-.stat__value {
-    font-weight: 600;
-}
-
-/* Status Modifier Classes */
-.server-card[data-status="running"] .status-dot { background-color: var(--status-online); }
-.server-card[data-status="running"] .status-text { color: var(--status-online); }
-
-.server-card[data-status="stopped"] .status-dot { background-color: var(--status-offline); }
-.server-card[data-status="stopped"] .status-text { color: var(--status-offline); }
