@@ -3,6 +3,8 @@ import { fetchServerData } from './api.js';
 document.addEventListener('DOMContentLoaded', () => {
 
     const app = {
+        userRole: sessionStorage.getItem('userRole') || 'viewer',
+        
         elements: {
             serverGrid: document.getElementById('serverGrid'),
             lastUpdated: document.getElementById('lastUpdated'),
@@ -17,16 +19,32 @@ document.addEventListener('DOMContentLoaded', () => {
             hostMemValue: document.getElementById('hostMemValue'),
             hostStorageFill: document.getElementById('hostStorageFill'),
             hostStorageValue: document.getElementById('hostStorageValue'),
+            headerContainer: document.querySelector('.header__container'),
         },
 
         charts: new Map(),
 
         init() {
+            document.body.dataset.role = this.userRole;
             this.elements.refreshBtn.addEventListener('click', () => this.loadData());
+            this.addLogoutButton();
             this.loadData();
             setInterval(() => this.loadData(), 5000);
         },
         
+        addLogoutButton() {
+            if (this.userRole === 'admin') {
+                const logoutBtn = document.createElement('button');
+                logoutBtn.textContent = 'Logout';
+                logoutBtn.className = 'btn-logout';
+                logoutBtn.addEventListener('click', () => {
+                    sessionStorage.removeItem('userRole');
+                    window.location.href = 'login.html';
+                });
+                this.elements.headerContainer.appendChild(logoutBtn);
+            }
+        },
+
         async loadData() {
             const isFirstLoad = !this.charts.size;
             if (isFirstLoad) this.setLoading(true);
@@ -34,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const { servers, host } = await fetchServerData();
                 this.renderHostStatus(host);
-                this.renderServerCards(servers, isFirstLoad);
+                this.renderServerCards(servers);
                 this.setError(false);
             } catch (error) {
                 console.error("Error fetching server data:", error);
@@ -61,10 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             this.elements.hostCpuFill.style.width = `${host.cpu * 100}%`;
             this.elements.hostCpuValue.textContent = `${(host.cpu * 100).toFixed(1)}%`;
-
             this.elements.hostMemFill.style.width = `${memUsage * 100}%`;
             this.elements.hostMemValue.textContent = `${(host.memory.used / 1024**3).toFixed(1)} / ${(host.memory.total / 1024**3).toFixed(1)} GB`;
-            
             this.elements.hostStorageFill.style.width = `${storageUsage * 100}%`;
             this.elements.hostStorageValue.textContent = `${(host.storage.used / 1024**3).toFixed(1)} / ${(host.storage.total / 1024**3).toFixed(1)} GB`;
         },
@@ -82,20 +98,21 @@ document.addEventListener('DOMContentLoaded', () => {
         createServerCard(server, index) {
             const cardTemplate = this.elements.template.content.cloneNode(true);
             const cardContainerEl = cardTemplate.querySelector('.card-container');
-            const serverCardEl = cardTemplate.querySelector('.server-card');
             
             cardContainerEl.style.setProperty('--animation-delay', `${index * 100}ms`);
 
-            this.addCardEventListeners(cardContainerEl, server);
+            if (this.userRole === 'admin') {
+                this.addCardEventListeners(cardContainerEl, server);
+            }
             
             this.elements.serverGrid.appendChild(cardTemplate);
             
-            const cpuCanvas = serverCardEl.querySelector('.cpu-chart');
-            const ramCanvas = serverCardEl.querySelector('.ram-chart');
+            const cpuCanvas = cardContainerEl.querySelector('.cpu-chart');
+            const ramCanvas = cardContainerEl.querySelector('.ram-chart');
             const cpuChart = this.createChart(cpuCanvas);
             const ramChart = this.createChart(ramCanvas);
             
-            this.charts.set(server.vmid, { cpuChart, ramChart, serverCardEl, cardContainerEl });
+            this.charts.set(server.vmid, { cpuChart, ramChart, cardContainerEl });
         },
 
         addCardEventListeners(container, server) {
@@ -107,50 +124,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            const controlButtons = container.querySelectorAll('.vm-control-btn');
-            controlButtons.forEach(btn => {
+            container.querySelectorAll('.vm-control-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    this.handleVmControl(server.vmid, btn.textContent);
+                    this.handleVmControl(server.vmid, btn);
                 });
             });
         },
 
-        handleVmControl(vmid, action) {
-            const { serverCardEl } = this.charts.get(vmid);
-            const statusEl = serverCardEl.querySelector('.vm-controls-status');
-            const buttons = serverCardEl.querySelectorAll('.vm-control-btn');
+        handleVmControl(vmid, button) {
+            const { cardContainerEl } = this.charts.get(vmid);
+            const statusEl = cardContainerEl.querySelector('.vm-controls-status');
+            const allButtons = cardContainerEl.querySelectorAll('.vm-control-btn');
             
+            const action = button.textContent;
             statusEl.textContent = `Sending '${action}' command...`;
-            buttons.forEach(b => b.disabled = true);
+            button.classList.add('loading');
+            allButtons.forEach(b => b.disabled = true);
             
-            // Simulate API call and refresh
             setTimeout(() => {
+                button.classList.remove('loading');
                 statusEl.textContent = `Command sent! Refreshing...`;
-                setTimeout(() => this.loadData(), 2000); // Refresh data after 2s
+                setTimeout(() => this.loadData(), 2000);
             }, 1500);
         },
 
         updateServerCard(vmid, serverData) {
-            const { cpuChart, ramChart, serverCardEl } = this.charts.get(vmid);
+            const { cpuChart, ramChart, cardContainerEl } = this.charts.get(vmid);
+            const serverCardEl = cardContainerEl.querySelector('.server-card');
             
             serverCardEl.dataset.status = serverData.status;
             
-            // Update front of card
             serverCardEl.querySelector('.server-card__type').textContent = `${serverData.type.toUpperCase()} (ID: ${vmid})`;
             serverCardEl.querySelector('.status-text').textContent = serverData.status;
             serverCardEl.querySelector('.server-card__name').textContent = serverData.name;
             serverCardEl.querySelector('.uptime').textContent = this.formatUptime(serverData.uptime);
 
-            // Update back of card
-            serverCardEl.querySelector('.detail-ip').textContent = serverData.ip;
-            serverCardEl.querySelector('.detail-cores').textContent = serverData.maxcpu;
-            serverCardEl.querySelector('.detail-memory').textContent = `${(serverData.maxmem / 1024**3).toFixed(1)} GB`;
-
-            // Enable/disable buttons
-            serverCardEl.querySelector('.btn-start').disabled = serverData.status === 'running';
-            serverCardEl.querySelector('.btn-stop').disabled = serverData.status === 'stopped';
-            serverCardEl.querySelector('.btn-reboot').disabled = serverData.status === 'stopped';
+            if(this.userRole === 'admin') {
+                serverCardEl.querySelector('.detail-ip').textContent = serverData.ip;
+                serverCardEl.querySelector('.detail-cores').textContent = serverData.maxcpu;
+                serverCardEl.querySelector('.detail-memory').textContent = `${(serverData.maxmem / 1024**3).toFixed(1)} GB`;
+                
+                const isRunning = serverData.status === 'running';
+                serverCardEl.querySelector('.btn-start').disabled = isRunning;
+                serverCardEl.querySelector('.btn-stop').disabled = !isRunning;
+                serverCardEl.querySelector('.btn-reboot').disabled = !isRunning;
+            }
 
             const chartColors = this.getChartColors(serverData.status);
             this.updateChartData(cpuChart, serverData.cpu, chartColors);
@@ -167,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, max: 1.1, display: false }, x: { display: false } }, // FIX: set max to 1.1
+                    scales: { y: { beginAtZero: true, max: 1.05, display: false }, x: { display: false } },
                     plugins: { legend: { display: false }, tooltip: { enabled: false } },
                     animation: { duration: 400 }
                 }

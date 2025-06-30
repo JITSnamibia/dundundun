@@ -32,6 +32,7 @@
 
     <main class="main-content">
         <div class="container">
+
             <section class="host-status" id="hostStatusPanel">
                 <div class="host-status__item">
                     <h4 class="host-status__label">Host CPU Load</h4>
@@ -112,9 +113,9 @@
                             <li><strong>Memory:</strong> <span class="detail-memory"></span></li>
                         </ul>
                         <div class="vm-controls">
-                            <button class="vm-control-btn btn-start">Start</button>
-                            <button class="vm-control-btn btn-stop">Stop</button>
-                            <button class="vm-control-btn btn-reboot">Reboot</button>
+                            <button class="vm-control-btn btn-start"><span>Start</span><div class="spinner"></div></button>
+                            <button class="vm-control-btn btn-stop"><span>Stop</span><div class="spinner"></div></button>
+                            <button class="vm-control-btn btn-reboot"><span>Reboot</span><div class="spinner"></div></button>
                         </div>
                         <p class="vm-controls-status"></p>
                     </div>

@@ -64,7 +64,7 @@ h1,h2,h3,h4,p { margin: 0; }
    3. Layout & Header
    ========================================================================== */
 .header { padding: var(--spacing-lg) 0; }
-.header__container { display: flex; justify-content: space-between; align-items: center; }
+.header__container { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
 .header__logo { font-size: 1.8rem; color: #fff; text-shadow: 0 0 15px var(--color-accent); }
 .header__subtitle { color: var(--color-text-muted); font-size: 0.9rem; }
 .main-content { padding: var(--spacing-lg) 0; }
@@ -123,6 +123,7 @@ h1,h2,h3,h4,p { margin: 0; }
   transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
 }
 .card-container.is-flipped .server-card { transform: rotateY(180deg); }
+.card-container[data-role="viewer"] .server-card { cursor: default; }
 
 .card__front, .card__back {
   position: absolute;
@@ -150,6 +151,7 @@ h1,h2,h3,h4,p { margin: 0; }
 .card__back {
   transform: rotateY(180deg);
   padding: var(--spacing-md);
+  justify-content: space-between;
 }
 
 /* ==========================================================================
@@ -177,7 +179,7 @@ h1,h2,h3,h4,p { margin: 0; }
 /* ==========================================================================
    7. Card Back & VM Controls
    ========================================================================== */
-.card__back-content { text-align: center; width: 100%; }
+.card__back-content { text-align: center; width: 100%; padding: var(--spacing-md); }
 .card__back-title { margin-bottom: var(--spacing-md); color: var(--color-accent); }
 .card__back-details { list-style: none; padding: 0; margin: 0 0 var(--spacing-lg) 0; text-align: left; font-size: 0.9rem; }
 .card__back-details li { padding: var(--spacing-sm) 0; border-bottom: 1px solid var(--color-border); }
@@ -185,7 +187,17 @@ h1,h2,h3,h4,p { margin: 0; }
 .card__back-details strong { color: var(--color-text-muted); margin-right: var(--spacing-sm); }
 
 .vm-controls { display: flex; gap: var(--spacing-sm); margin: var(--spacing-md) 0; justify-content: center; }
-.vm-control-btn { border: none; padding: 10px 16px; border-radius: 8px; font-family: var(--font-family-body); font-weight: 600; cursor: pointer; transition: transform 0.2s, background-color 0.2s; position: relative; }
+.vm-control-btn {
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-family: var(--font-family-body);
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+    position: relative;
+    min-width: 80px;
+}
 .vm-control-btn:hover:not(:disabled) { transform: scale(1.05); }
 .btn-start { background-color: var(--color-accent); color: #000; }
 .btn-stop { background-color: var(--color-danger); color: #fff; }
@@ -196,12 +208,40 @@ h1,h2,h3,h4,p { margin: 0; }
 .vm-control-btn.loading span { visibility: hidden; }
 
 .vm-controls-status { min-height: 20px; color: var(--color-text-muted); font-size: 0.9rem; transition: opacity 0.3s; }
-.btn-flip { position: absolute; bottom: var(--spacing-md); right: var(--spacing-md); background: none; border: none; color: var(--color-text-muted); cursor: pointer; padding: var(--spacing-sm); }
+.btn-flip { align-self: flex-end; background: none; border: none; color: var(--color-text-muted); cursor: pointer; padding: var(--spacing-sm); }
 
-/* Other UI Elements */
+/* ==========================================================================
+   8. Other UI & Role-based Styles
+   ========================================================================== */
 .btn-refresh { background-color: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text-muted); width: 50px; height: 50px; border-radius: 50%; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
 .btn-refresh:hover { color: var(--color-accent); border-color: var(--color-accent); transform: rotate(90deg) scale(1.1); box-shadow: var(--shadow-glow); }
 .loading-indicator, .error-state { text-align: center; padding: 60px 0; }
 .error-state h3 { color: var(--color-danger); margin-bottom: 8px; }
 .spinner { width: 48px; height: 48px; border: 5px solid var(--color-border); border-bottom-color: var(--color-accent); border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite; margin-bottom: 16px; }
 @keyframes rotation { to { transform: rotate(360deg); } }
+
+.btn-logout {
+    background: none;
+    border: 1px solid var(--color-danger);
+    color: var(--color-danger);
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.btn-logout:hover {
+    background-color: var(--color-danger);
+    color: #fff;
+}
+
+body[data-role="viewer"] .card-container {
+    cursor: default;
+}
+body[data-role="viewer"] .card__front {
+    cursor: default;
+}
+body[data-role="viewer"] .card__back {
+    display: none; /* Completely hide the back for viewers */
+}
