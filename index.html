@@ -32,7 +32,6 @@
 
     <main class="main-content">
         <div class="container">
-
             <section class="host-status" id="hostStatusPanel">
                 <div class="host-status__item">
                     <h4 class="host-status__label">Host CPU Load</h4>
@@ -105,13 +104,20 @@
                     </div>
                 </div>
                 <div class="card__back">
-                    <h4 class="card__back-title">VM Controls</h4>
-                    <div class="vm-controls">
-                        <button class="vm-control-btn btn-start">Start</button>
-                        <button class="vm-control-btn btn-stop">Stop</button>
-                        <button class="vm-control-btn btn-reboot">Reboot</button>
+                    <div class="card__back-content">
+                        <h4 class="card__back-title">Details & Controls</h4>
+                        <ul class="card__back-details">
+                            <li><strong>IP Address:</strong> <span class="detail-ip"></span></li>
+                            <li><strong>Cores:</strong> <span class="detail-cores"></span></li>
+                            <li><strong>Memory:</strong> <span class="detail-memory"></span></li>
+                        </ul>
+                        <div class="vm-controls">
+                            <button class="vm-control-btn btn-start">Start</button>
+                            <button class="vm-control-btn btn-stop">Stop</button>
+                            <button class="vm-control-btn btn-reboot">Reboot</button>
+                        </div>
+                        <p class="vm-controls-status"></p>
                     </div>
-                    <p class="vm-controls-status"></p>
                     <button class="btn-flip" title="Flip back">Back</button>
                 </div>
             </div>
