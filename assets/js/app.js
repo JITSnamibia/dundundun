@@ -1,157 +1,114 @@
-/**
- * @file app.js
- * @description Main application script for the SEO Fix Guide.
- */
+document.addEventListener('DOMContentLoaded', () => {
 
-import { glossaryTerms } from './glossary.js';
-
-const App = {
-    // Cache of DOM elements
-    $: {
-        header: document.getElementById('header'),
-        themeToggle: document.getElementById('themeToggle'),
-        progressBarFill: document.querySelector('.progress-bar__fill'),
-        backToTopButton: document.getElementById('backToTop'),
-        glossaryTerms: document.querySelectorAll('.glossary-term'),
-        modal: document.getElementById('glossaryModal'),
-        modalTitle: document.getElementById('modalTerm'),
-        modalDefinition: document.getElementById('modalDefinition'),
-        modalCloseBtn: document.getElementById('modalClose'),
-        checklistItems: document.querySelectorAll('.checklist-checkbox'),
-        checklistProgress: document.getElementById('checklistProgress'),
-        checklistScore: document.getElementById('checklistScore'),
-    },
-
-    state: {
-        lastScrollY: window.scrollY,
-        ticking: false,
-    },
-
-    init() {
-        document.addEventListener('DOMContentLoaded', () => {
-            this.themeManager.init();
-            this.scrollManager.init();
-            this.modalManager.init();
-            this.checklistManager.init();
-        });
-    },
-
-    // Manages the color theme
-    themeManager: {
-        init() {
-            const savedTheme = localStorage.getItem('color-scheme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            this.setTheme(savedTheme);
-            App.$.themeToggle.addEventListener('click', () => this.toggleTheme());
+    // --- MOCK DATA ---
+    // This is where you would fetch data from your real uptime tracker API.
+    // For now, we'll use this placeholder data.
+    const servers = [
+        {
+            name: 'Minecraft Survival',
+            game: 'Minecraft',
+            ip: '192.168.1.100:25565',
+            status: 'Online'
         },
-        setTheme(theme) {
-            document.documentElement.setAttribute('data-color-scheme', theme);
-            App.$.themeToggle.querySelector('.theme-toggle__icon').textContent = theme === 'dark' ? '☀️' : '🌙';
-            localStorage.setItem('color-scheme', theme);
+        {
+            name: 'Valheim Wilderness',
+            game: 'Valheim',
+            ip: '192.168.1.100:2456',
+            status: 'Online'
         },
-        toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-color-scheme');
-            this.setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+        {
+            name: 'Plex Media Server',
+            game: 'Utility',
+            ip: '192.168.1.100:32400',
+            status: 'Offline'
         },
-    },
+        {
+            name: 'CS:GO Retakes',
+            game: 'Counter-Strike',
+            ip: '192.168.1.100:27015',
+            status: 'Starting'
+        },
+        {
+            name: 'Development Server',
+            game: 'Utility',
+            ip: 'localhost:8080',
+            status: 'Online'
+        },
+    ];
 
-    // Manages all scroll-related features
-    scrollManager: {
-        init() {
-            window.addEventListener('scroll', () => {
-                if (!App.state.ticking) {
-                    window.requestAnimationFrame(() => {
-                        this.handleScroll();
-                        App.state.ticking = false;
-                    });
-                    App.state.ticking = true;
-                }
-            });
-        },
-        handleScroll() {
-            const currentScrollY = window.scrollY;
+    // --- DOM Elements ---
+    const serverGrid = document.getElementById('serverGrid');
+    const statusSummary = document.getElementById('statusSummary');
+    const lastUpdated = document.getElementById('lastUpdated');
+    const template = document.getElementById('server-card-template');
+
+    /**
+     * Renders all server cards to the page.
+     */
+    function renderServers() {
+        // Clear the grid before rendering
+        serverGrid.innerHTML = '';
+
+        let onlineCount = 0;
+
+        servers.forEach(server => {
+            const card = template.content.cloneNode(true);
             
-            // Handle header visibility
-            if (currentScrollY > 100 && currentScrollY > App.state.lastScrollY) {
-                App.$.header.classList.add('hidden');
-            } else {
-                App.$.header.classList.remove('hidden');
+            const serverCard = card.querySelector('.server-card');
+            const gameEl = card.querySelector('.server-card__game');
+            const statusTextEl = card.querySelector('.status-text');
+            const nameEl = card.querySelector('.server-card__name');
+            const ipEl = card.querySelector('.ip-address');
+            const copyBtn = card.querySelector('.copy-ip-btn');
+
+            // Set data attribute for CSS styling
+            serverCard.dataset.status = server.status;
+
+            // Populate the card with data
+            gameEl.textContent = server.game;
+            statusTextEl.textContent = server.status;
+            nameEl.textContent = server.name;
+            ipEl.textContent = server.ip;
+            
+            if (server.status === 'Online') {
+                onlineCount++;
             }
 
-            // Update progress bar
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            App.$.progressBarFill.style.width = `${(currentScrollY / docHeight) * 100}%`;
-
-            // Handle back-to-top button
-            App.$.backToTopButton.classList.toggle('visible', currentScrollY > 300);
-
-            App.state.lastScrollY = currentScrollY <= 0 ? 0 : currentScrollY;
-        },
-    },
-
-    // Manages the interactive glossary modal
-    modalManager: {
-        init() {
-            App.$.glossaryTerms.forEach(term => {
-                term.addEventListener('click', (e) => {
-                    const termKey = e.currentTarget.dataset.term;
-                    this.openModal(termKey);
+            // Add event listener for the copy button
+            copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(server.ip).then(() => {
+                    copyBtn.title = 'Copied!';
+                    setTimeout(() => { copyBtn.title = 'Copy IP Address'; }, 2000);
                 });
             });
 
-            App.$.modalCloseBtn.addEventListener('click', () => this.closeModal());
-            App.$.modal.addEventListener('click', (e) => {
-                if (e.target === App.$.modal) this.closeModal();
-            });
-        },
-        openModal(termKey) {
-            const data = glossaryTerms[termKey];
-            if (!data) return;
+            serverGrid.appendChild(card);
+        });
+        
+        // Update the summary text
+        statusSummary.innerHTML = `<strong>${onlineCount}</strong> of <strong>${servers.length}</strong> servers are currently online.`;
+        
+        // Update the timestamp
+        lastUpdated.textContent = new Date().toLocaleTimeString();
+    }
 
-            App.$.modalTitle.textContent = data.term;
-            App.$.modalDefinition.textContent = data.definition;
-            App.$.modal.classList.add('visible');
-            document.body.style.overflow = 'hidden';
-        },
-        closeModal() {
-            App.$.modal.classList.remove('visible');
-            document.body.style.overflow = '';
-        },
-    },
+    // Initial render
+    renderServers();
 
-    // Manages the interactive checklist
-    checklistManager: {
-        init() {
-            this.loadState(); // Load saved state first
-            App.$.checklistItems.forEach(item => {
-                item.addEventListener('change', () => this.update());
-            });
-            this.update(); // Initial update on page load
-        },
-        update() {
-            const checkedCount = Array.from(App.$.checklistItems).filter(i => i.checked).length;
-            const totalCount = App.$.checklistItems.length;
-            const score = totalCount > 0 ? Math.round((checkedCount / totalCount) * 100) : 0;
+    // --- IMPORTANT ---
+    // The line below simulates refreshing the data every 10 seconds.
+    // In a real application, you would replace this with a `fetch` call to your API inside the interval.
+    // For example:
+    // setInterval(() => {
+    //   fetch('http://your-uptime-api/status')
+    //     .then(response => response.json())
+    //     .then(data => {
+    //       // Here, you would update the `servers` array with the new `data`
+    //       // and then call renderServers() again.
+    //       servers = data;
+    //       renderServers();
+    //     });
+    // }, 10000); // 10000ms = 10 seconds
 
-            App.$.checklistScore.textContent = `${score}%`;
-            App.$.checklistProgress.style.width = `${score}%`;
-            App.$.checklistProgress.style.backgroundColor = score === 100 ? 'var(--color-success)' : 'var(--color-primary)';
-
-            this.saveState();
-        },
-        saveState() {
-            const state = Array.from(App.$.checklistItems).map(item => ({ id: item.id, checked: item.checked }));
-            localStorage.setItem('checklistState', JSON.stringify(state));
-        },
-        loadState() {
-            const state = JSON.parse(localStorage.getItem('checklistState'));
-            if (state) {
-                state.forEach(item => {
-                    const checkbox = document.getElementById(item.id);
-                    if (checkbox) checkbox.checked = item.checked;
-                });
-            }
-        },
-    },
-};
-
-App.init();
+    console.log("Server Dashboard Initialized.");
+});
