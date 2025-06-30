@@ -60,7 +60,6 @@ p { margin: 0; }
    ========================================================================== */
 .header {
   padding: var(--spacing-lg) 0;
-  text-align: center;
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -91,14 +90,6 @@ p { margin: 0; }
 /* ==========================================================================
    4. Status Dashboard Components
    ========================================================================== */
-.status-summary {
-  margin-bottom: var(--spacing-lg);
-  text-align: center;
-  font-size: 1.2rem;
-  color: var(--color-text-muted);
-}
-.status-summary strong { color: var(--color-text); }
-
 .server-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -125,11 +116,6 @@ p { margin: 0; }
   margin-bottom: var(--spacing-sm);
 }
 
-.server-card__game {
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
-}
-
 .server-card__status {
   display: flex;
   align-items: center;
@@ -144,40 +130,109 @@ p { margin: 0; }
   background-color: var(--color-text-muted);
 }
 
+/* ==========================================================================
+   5. NEW & UPDATED STYLES FOR FUNCTIONAL DASHBOARD
+   ========================================================================== */
+
+/* Header Refresh Button */
+.header__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.btn-refresh {
+    background: none;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-refresh:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    transform: rotate(90deg);
+}
+
+/* Loading & Error States */
+.loading-indicator, .error-state {
+    text-align: center;
+    padding: 60px 0;
+    color: var(--color-text-muted);
+}
+.error-state h3 { color: var(--status-offline); margin-bottom: 8px; }
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 5px solid var(--color-border);
+    border-bottom-color: var(--color-accent);
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    margin-bottom: 16px;
+}
+@keyframes rotation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+/* Updated Server Card */
+.server-card__type {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+}
 .server-card__name {
-  font-size: 1.5rem;
-  margin-bottom: var(--spacing-md);
-  color: var(--color-text);
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-lg); /* Increased margin */
+    color: var(--color-text);
+}
+.server-card__stats {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+.stat {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+.stat__label {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+.stat__value {
+    font-weight: 600;
 }
 
-.server-card__ip {
-  background-color: var(--color-background);
-  border: 1px solid var(--color-border);
-  padding: var(--spacing-sm) 12px;
-  border-radius: 8px;
-  font-family: monospace;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* Progress Bar for Stats */
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background-color: var(--color-background);
+    border-radius: 6px;
+    overflow: hidden;
 }
-
-.copy-ip-btn {
-  background: none;
-  border: none;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  display: flex;
+.progress-bar__fill {
+    height: 100%;
+    width: 0%; /* Set by JS */
+    background-color: var(--color-accent);
+    border-radius: 6px;
+    transition: width 0.5s ease;
 }
-.copy-ip-btn:hover { color: var(--color-accent); }
 
 /* Status Modifier Classes */
-.server-card[data-status="Online"] .status-dot { background-color: var(--status-online); }
-.server-card[data-status="Online"] .status-text { color: var(--status-online); }
+.server-card[data-status="running"] .status-dot { background-color: var(--status-online); }
+.server-card[data-status="running"] .status-text { color: var(--status-online); }
 
-.server-card[data-status="Offline"] .status-dot { background-color: var(--status-offline); }
-.server-card[data-status="Offline"] .status-text { color: var(--status-offline); }
-
-.server-card[data-status="Starting"] .status-dot { background-color: var(--status-starting); }
-.server-card[data-status="Starting"] .status-text { color: var(--status-starting); }
+.server-card[data-status="stopped"] .status-dot { background-color: var(--status-offline); }
+.server-card[data-status="stopped"] .status-text { color: var(--status-offline); }
