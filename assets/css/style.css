@@ -131,7 +131,7 @@ p { margin: 0; }
 }
 
 /* ==========================================================================
-   5. NEW & UPDATED STYLES FOR FUNCTIONAL DASHBOARD
+   5. FUNCTIONAL DASHBOARD STYLES (UPDATED FOR CHARTS)
    ========================================================================== */
 
 /* Header Refresh Button */
@@ -192,7 +192,7 @@ p { margin: 0; }
 }
 .server-card__name {
     font-size: 1.5rem;
-    margin-bottom: var(--spacing-lg); /* Increased margin */
+    margin-bottom: var(--spacing-lg);
     color: var(--color-text);
 }
 .server-card__stats {
@@ -200,6 +200,12 @@ p { margin: 0; }
     flex-direction: column;
     gap: var(--spacing-md);
 }
+
+/* NEW: Styles for Chart Containers */
+.stat-chart {
+    height: 80px; /* Give the canvas a defined height */
+}
+
 .stat {
     display: grid;
     grid-template-columns: 60px 1fr;
@@ -212,22 +218,6 @@ p { margin: 0; }
 }
 .stat__value {
     font-weight: 600;
-}
-
-/* Progress Bar for Stats */
-.progress-bar {
-    width: 100%;
-    height: 12px;
-    background-color: var(--color-background);
-    border-radius: 6px;
-    overflow: hidden;
-}
-.progress-bar__fill {
-    height: 100%;
-    width: 0%; /* Set by JS */
-    background-color: var(--color-accent);
-    border-radius: 6px;
-    transition: width 0.5s ease;
 }
 
 /* Status Modifier Classes */

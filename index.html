@@ -11,6 +11,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="assets/css/style.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <script src="assets/js/app.js" type="module" defer></script>
 </head>
 <body>
@@ -62,17 +65,11 @@
             </div>
             <h3 class="server-card__name"></h3>
             <div class="server-card__stats">
-                <div class="stat">
-                    <span class="stat__label">CPU</span>
-                    <div class="progress-bar">
-                        <div class="progress-bar__fill cpu-usage"></div>
-                    </div>
+                <div class="stat-chart">
+                    <canvas class="cpu-chart"></canvas>
                 </div>
-                <div class="stat">
-                    <span class="stat__label">RAM</span>
-                    <div class="progress-bar">
-                        <div class="progress-bar__fill ram-usage"></div>
-                    </div>
+                <div class="stat-chart">
+                    <canvas class="ram-chart"></canvas>
                 </div>
                 <div class="stat">
                     <span class="stat__label">Uptime</span>
