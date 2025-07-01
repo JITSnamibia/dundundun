@@ -1,6 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network Builder Game</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div id="main">
+    <div id="sidebar">
+      <h2>Inventory</h2>
+      <div id="inventory"></div>
+      <div id="controls">
+        <button id="connect-btn">Connect Devices</button>
+        <button id="reset-btn">Reset Network</button>
+      </div>
+      <p style="font-size:0.9em;color:#aaa;margin-top:30px;">Drag devices onto the grid. Select a device, click Connect, then double-click another device to connect them.</p>
+    </div>
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+      <canvas id="game-canvas" width="900" height="600"></canvas>
+    </div>
+  </div>
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>R730 Home Lab - Server Status</title>

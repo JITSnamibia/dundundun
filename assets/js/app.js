@@ -1,3 +1,167 @@
+import { DEVICE_TYPES, addDevice, connectDevices, placedDevices, connections, resetGame, getDeviceById } from './api.js';
+
+const gridSize = 60;
+const canvas = document.getElementById('game-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 900;
+canvas.height = 600;
+
+let draggingDevice = null;
+let dragOffset = { x: 0, y: 0 };
+let selectedDeviceId = null;
+let connectMode = false;
+let connectFromId = null;
+
+function drawGrid() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = '#eee';
+  for (let x = 0; x < canvas.width; x += gridSize) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, canvas.height);
+    ctx.stroke();
+  }
+  for (let y = 0; y < canvas.height; y += gridSize) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+  }
+}
+
+function drawDevices() {
+  for (const device of placedDevices) {
+    ctx.fillStyle = device.color;
+    ctx.beginPath();
+    ctx.arc(device.x, device.y, 25, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.strokeStyle = selectedDeviceId === device.id ? '#000' : '#333';
+    ctx.lineWidth = selectedDeviceId === device.id ? 4 : 2;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(device.name, device.x, device.y + 5);
+  }
+}
+
+function drawConnections() {
+  ctx.strokeStyle = '#222';
+  ctx.lineWidth = 3;
+  for (const conn of connections) {
+    const d1 = getDeviceById(conn.from);
+    const d2 = getDeviceById(conn.to);
+    if (d1 && d2) {
+      ctx.beginPath();
+      ctx.moveTo(d1.x, d1.y);
+      ctx.lineTo(d2.x, d2.y);
+      ctx.stroke();
+    }
+  }
+}
+
+function redraw() {
+  drawGrid();
+  drawConnections();
+  drawDevices();
+}
+
+function snapToGrid(x, y) {
+  return {
+    x: Math.round(x / gridSize) * gridSize,
+    y: Math.round(y / gridSize) * gridSize
+  };
+}
+
+canvas.addEventListener('mousedown', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mouse = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  for (const device of placedDevices) {
+    const dx = mouse.x - device.x;
+    const dy = mouse.y - device.y;
+    if (Math.sqrt(dx * dx + dy * dy) < 25) {
+      draggingDevice = device;
+      dragOffset = { x: dx, y: dy };
+      selectedDeviceId = device.id;
+      redraw();
+      return;
+    }
+  }
+  selectedDeviceId = null;
+  redraw();
+});
+
+canvas.addEventListener('mousemove', e => {
+  if (draggingDevice) {
+    const rect = canvas.getBoundingClientRect();
+    const mouse = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    const snapped = snapToGrid(mouse.x - dragOffset.x, mouse.y - dragOffset.y);
+    draggingDevice.x = snapped.x;
+    draggingDevice.y = snapped.y;
+    redraw();
+  }
+});
+
+canvas.addEventListener('mouseup', e => {
+  draggingDevice = null;
+});
+
+canvas.addEventListener('dblclick', e => {
+  if (selectedDeviceId && connectMode) {
+    if (connectFromId && connectFromId !== selectedDeviceId) {
+      connectDevices(connectFromId, selectedDeviceId);
+      connectFromId = null;
+      connectMode = false;
+      redraw();
+    } else {
+      connectFromId = selectedDeviceId;
+    }
+  }
+});
+
+document.getElementById('reset-btn').onclick = () => {
+  resetGame();
+  selectedDeviceId = null;
+  connectFromId = null;
+  connectMode = false;
+  redraw();
+};
+
+document.getElementById('connect-btn').onclick = () => {
+  if (selectedDeviceId) {
+    connectMode = true;
+    connectFromId = selectedDeviceId;
+  }
+};
+
+function createInventory() {
+  const inv = document.getElementById('inventory');
+  inv.innerHTML = '';
+  for (const type of DEVICE_TYPES) {
+    const btn = document.createElement('button');
+    btn.className = 'inv-btn';
+    btn.style.background = type.color;
+    btn.textContent = type.name;
+    btn.onclick = () => {
+      const id = 'dev-' + Math.random().toString(36).substr(2, 9);
+      addDevice({
+        id,
+        type: type.type,
+        name: type.name,
+        color: type.color,
+        x: 100 + Math.random() * 200,
+        y: 100 + Math.random() * 200
+      });
+      redraw();
+    };
+    inv.appendChild(btn);
+  }
+}
+
+window.onload = () => {
+  createInventory();
+  redraw();
+};
 import { fetchServerData } from './api.js';
 
 document.addEventListener('DOMContentLoaded', () => {
